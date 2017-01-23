@@ -46,7 +46,7 @@ public class ArraySum {
                     sum = sum + Integer.parseInt(list[counter]);
                     counter++;
                 }
-                System.out.println("The sum of the array is: " + sum);
+                System.out.println("The total sum of the array is: " + sum);
             }
         }
         catch (Exception e) 
