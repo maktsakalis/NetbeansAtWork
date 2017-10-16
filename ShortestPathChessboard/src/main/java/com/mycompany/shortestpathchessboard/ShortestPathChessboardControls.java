@@ -179,8 +179,11 @@ public class ShortestPathChessboardControls extends JFrame {
                 if (e.getSource() == resetbtn)
                 {
                     //set figure position to default node
+                    squares[currentFigurePos.getX()][currentFigurePos.getY()].setIcon(null);                    
                     setFigurePos(defaultFigurePos);
-
+                    
+                    currentFigurePos = defaultFigurePos;
+                    
                     //delete any target nodes
                     if (currentTargetPos != null)
                     {
@@ -294,7 +297,7 @@ public class ShortestPathChessboardControls extends JFrame {
                 {
                     System.out.println("CurrentTargetPos is NOT null");
                     squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
-                    System.out.println("CurrentTargetPos.x= " + currentTargetPos.getX() + " CurrentTargetPos.y= " + currentTargetPos.getY());
+                    System.out.println("Previous TargetPos.x= " + currentTargetPos.getX() + " Previous TargetPos.y= " + currentTargetPos.getY());
                     System.out.println("CurrentFigurePos.x= " + currentFigurePos.getX() + " CurrentFigurePos.y= " + currentFigurePos.getY());
                     target = resizeIcon(target, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
                     squares[arrayPos.getX()][arrayPos.getY()].setIcon(target);
