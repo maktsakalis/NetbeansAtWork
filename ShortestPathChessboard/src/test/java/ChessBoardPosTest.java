@@ -36,8 +36,56 @@ public class ChessBoardPosTest {
     public void tearDown() {
     }
 
+    /**
+     * Test of getLetter method, of class ChessBoardPos.
+     */
     @Test
-    public void testSomeMethod() {
+    public void testGetLetter() {
+        System.out.println("getLetter");
+        ChessBoardPos instance = null;
+        char expResult = ' ';
+        char result = instance.getLetter();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setLetter method, of class ChessBoardPos.
+     */
+    @Test
+    public void testSetLetter() {
+        System.out.println("setLetter");
+        char letter = ' ';
+        ChessBoardPos instance = null;
+        instance.setLetter(letter);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getNumber method, of class ChessBoardPos.
+     */
+    @Test
+    public void testGetNumber() {
+        System.out.println("getNumber");
+        ChessBoardPos instance = null;
+        int expResult = 0;
+        int result = instance.getNumber();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setNumber method, of class ChessBoardPos.
+     */
+    @Test
+    public void testSetNumber() {
+        System.out.println("setNumber");
+        int number = 0;
+        ChessBoardPos instance = null;
+        instance.setNumber(number);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

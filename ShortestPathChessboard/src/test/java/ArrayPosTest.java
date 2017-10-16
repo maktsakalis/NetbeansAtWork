@@ -64,5 +64,59 @@ public class ArrayPosTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
+
+    /**
+     * Test of getX method, of class ArrayPos.
+     */
+    @Test
+    public void testGetX() {
+        System.out.println("getX");
+        ArrayPos instance = null;
+        int expResult = 0;
+        int result = instance.getX();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setX method, of class ArrayPos.
+     */
+    @Test
+    public void testSetX() {
+        System.out.println("setX");
+        int x = 0;
+        ArrayPos instance = null;
+        instance.setX(x);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getY method, of class ArrayPos.
+     */
+    @Test
+    public void testGetY() {
+        System.out.println("getY");
+        ArrayPos instance = null;
+        int expResult = 0;
+        int result = instance.getY();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setY method, of class ArrayPos.
+     */
+    @Test
+    public void testSetY() {
+        System.out.println("setY");
+        int y = 0;
+        ArrayPos instance = null;
+        instance.setY(y);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
     
 }
