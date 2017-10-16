@@ -8,7 +8,7 @@
  *
  * @author makis
  */
-public class ShortestPathChessboardTest {
+public class ShortestPathChessboardDemo {
 
     public static void main(String[] args) {
 

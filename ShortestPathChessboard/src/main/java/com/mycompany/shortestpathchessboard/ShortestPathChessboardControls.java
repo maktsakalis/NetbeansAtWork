@@ -136,12 +136,12 @@ public class ShortestPathChessboardControls extends JFrame {
     }
     
     private void setFigurePos(ArrayPos arrayPos) {
-        squares[currentFigurePos.x][currentFigurePos.y].setIcon(null);
-        System.out.println(squares[arrayPos.x][arrayPos.y].getWidth());
-        System.out.println(squares[arrayPos.x][arrayPos.y].getHeight());
+        squares[currentFigurePos.getX()][currentFigurePos.getY()].setIcon(null);
+        System.out.println(squares[arrayPos.getX()][arrayPos.getY()].getWidth());
+        System.out.println(squares[arrayPos.getX()][arrayPos.getY()].getHeight());
         
-        figure = resizeIcon(figure, squares[arrayPos.x][arrayPos.y].getWidth(), squares[arrayPos.x][arrayPos.y].getHeight());
-        squares[arrayPos.x][arrayPos.y].setIcon(figure);
+        figure = resizeIcon(figure, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
+        squares[arrayPos.getX()][arrayPos.getY()].setIcon(figure);
         
         currentFigurePos = arrayPos;
     }
@@ -184,7 +184,7 @@ public class ShortestPathChessboardControls extends JFrame {
                     //delete any target nodes
                     if (currentTargetPos != null)
                     {
-                        squares[currentTargetPos.x][currentTargetPos.y].setIcon(null);
+                        squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
                     }
                     fromNode.setText("");
                     toNode.setText("");
@@ -213,8 +213,8 @@ public class ShortestPathChessboardControls extends JFrame {
     //method that calculates the s
     private void /*LinkedList<ArrayPos>*/ calculateShortestPath(ArrayPos figurePos) {
         
-        int row = figurePos.x;
-        int col = figurePos.y;
+        int row = figurePos.getX();
+        int col = figurePos.getY();
         int i = 0;
         
         ArrayPos[] nodes = new ArrayPos[8];
@@ -242,7 +242,7 @@ public class ShortestPathChessboardControls extends JFrame {
             }
             for (ArrayPos a : possibleSquares)
             {
-                System.out.println("Possible moves to nodes" + a.x + "," + a.y);
+                System.out.println("Possible moves to nodes" + a.getX() + "," + a.getY());
             }
             System.out.println("Does list contain target= " + possibleSquares.contains(currentTargetPos));
 /*            
@@ -268,7 +268,7 @@ public class ShortestPathChessboardControls extends JFrame {
     }
     
     private boolean isSquareOnBoard(ArrayPos a) {
-        if ((a.x >= 0 && a.x <= 7) && (a.y >= 0 && a.y <= 7))
+        if ((a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7))
         {
             return true;
         }
@@ -280,38 +280,38 @@ public class ShortestPathChessboardControls extends JFrame {
         {
             if (currentTargetPos != null)
             {
-                System.out.println("arrayPos.x= " + arrayPos.x + " arrayPos.y= " + arrayPos.y);
-                System.out.println("currentFigurePos.x= " + arrayPos.x + " currentFigurePos.y= " + arrayPos.y);
+                System.out.println("arrayPos.x= " + arrayPos.getX() + " arrayPos.y= " + arrayPos.getY());
+                System.out.println("currentFigurePos.x= " + arrayPos.getX() + " currentFigurePos.y= " + arrayPos.getY());
                 
                 if (arrayPos.equals(currentFigurePos))
                 {
                     //alert to select new target and null the target
                     System.out.println("CurrentTargetPos is equal to CurrentFigurePos");
                     //delete the previous target icon
-                    squares[currentTargetPos.x][currentTargetPos.y].setIcon(null);
+                    squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
                     
                 } else
                 {
                     System.out.println("CurrentTargetPos is NOT null");
-                    squares[currentTargetPos.x][currentTargetPos.y].setIcon(null);
-                    System.out.println("CurrentTargetPos.x= " + currentTargetPos.x + " CurrentTargetPos.y= " + currentTargetPos.y);
-                    System.out.println("CurrentFigurePos.x= " + currentFigurePos.x + " CurrentFigurePos.y= " + currentFigurePos.y);
-                    target = resizeIcon(target, squares[arrayPos.x][arrayPos.y].getWidth(), squares[arrayPos.x][arrayPos.y].getHeight());
-                    squares[arrayPos.x][arrayPos.y].setIcon(target);
+                    squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
+                    System.out.println("CurrentTargetPos.x= " + currentTargetPos.getX() + " CurrentTargetPos.y= " + currentTargetPos.getY());
+                    System.out.println("CurrentFigurePos.x= " + currentFigurePos.getX() + " CurrentFigurePos.y= " + currentFigurePos.getY());
+                    target = resizeIcon(target, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
+                    squares[arrayPos.getX()][arrayPos.getY()].setIcon(target);
                     currentTargetPos = arrayPos;
                     ChessBoardPos currentChessPos = getChessBoardPos(currentTargetPos);
-                    toNode.setText(currentChessPos.letter + String.valueOf(currentChessPos.number));
+                    toNode.setText(currentChessPos.getLetter() + String.valueOf(currentChessPos.getNumber()));
                     calculateShortestPath(currentFigurePos);
                 }
                 
             } else
             {
                 System.out.println("CurrentTargetPos is NULL!");
-                target = resizeIcon(target, squares[arrayPos.x][arrayPos.y].getWidth(), squares[arrayPos.x][arrayPos.y].getHeight());
-                squares[arrayPos.x][arrayPos.y].setIcon(target);
+                target = resizeIcon(target, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
+                squares[arrayPos.getX()][arrayPos.getY()].setIcon(target);
                 currentTargetPos = arrayPos;
                 ChessBoardPos currentChessPos = getChessBoardPos(currentTargetPos);
-                toNode.setText(currentChessPos.letter + String.valueOf(currentChessPos.number));
+                toNode.setText(currentChessPos.getLetter() + String.valueOf(currentChessPos.getNumber()));
                 calculateShortestPath(currentFigurePos);
             }
         }
@@ -337,12 +337,12 @@ public class ShortestPathChessboardControls extends JFrame {
             }
             
             ChessBoardPos inputChessPos = new ChessBoardPos(letter, number);
-            System.out.println("inputChessPos.letter= " + inputChessPos.letter + " inputChessPos.number= " + inputChessPos.number);
+            System.out.println("inputChessPos.letter= " + inputChessPos.getLetter() + " inputChessPos.number= " + inputChessPos.getNumber());
             
             ArrayPos inputPos = getArrayPos(inputChessPos);
-            System.out.println("inputPos.x= " + inputPos.x + " inputPos.y= " + inputPos.y);
+            System.out.println("inputPos.x= " + inputPos.getX() + " inputPos.y= " + inputPos.getY());
             
-            squares[currentTargetPos.x][currentTargetPos.y].setIcon(null);
+            squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
             //change the figure position to inputted position value 
             setFigurePos(inputPos);
             
@@ -360,60 +360,60 @@ public class ShortestPathChessboardControls extends JFrame {
         
         ChessBoardPos result = new ChessBoardPos('\u0000', 0);
         
-        switch (arrayPos.y)
+        switch (arrayPos.getY())
         {
             case 0:
-                result.letter = 'A';
+                result.setLetter('A');
                 break;
             case 1:
-                result.letter = 'B';
+                result.setLetter('B');
                 break;
             case 2:
-                result.letter = 'C';
+                result.setLetter('C');                
                 break;
             case 3:
-                result.letter = 'D';
+                result.setLetter('D'); 
                 break;
             case 4:
-                result.letter = 'E';
+                result.setLetter('E');
                 break;
             case 5:
-                result.letter = 'F';
+                result.setLetter('F');
                 break;
             case 6:
-                result.letter = 'G';
+                result.setLetter('G');
                 break;
             case 7:
-                result.letter = 'H';
+                result.setLetter('H');
                 break;
             default:
             
         }
-        switch (arrayPos.x)
+        switch (arrayPos.getX())
         {
             case 0:
-                result.number = 8;
+                result.setNumber(8);
                 break;
             case 1:
-                result.number = 7;
+                result.setNumber(7);
                 break;
             case 2:
-                result.number = 6;
+                result.setNumber(6);
                 break;
             case 3:
-                result.number = 5;
+                result.setNumber(5);
                 break;
             case 4:
-                result.number = 4;
+                result.setNumber(4);
                 break;
             case 5:
-                result.number = 3;
+                result.setNumber(3);
                 break;
             case 6:
-                result.number = 2;
+                result.setNumber(2);
                 break;
             case 7:
-                result.number = 1;
+                result.setNumber(1);
                 break;
             default:
             
@@ -425,60 +425,60 @@ public class ShortestPathChessboardControls extends JFrame {
         
         ArrayPos result = new ArrayPos(0, 0);
         
-        switch (chessPos.letter)
+        switch (chessPos.getLetter())
         {
             case 'A':
-                result.y = 0;
+                result.setY(0);
                 break;
             case 'B':
-                result.y = 1;
+                result.setY(1);
                 break;
             case 'C':
-                result.y = 2;
+                result.setY(2);
                 break;
             case 'D':
-                result.y = 3;
+                result.setY(3);
                 break;
             case 'E':
-                result.y = 4;
+                result.setY(4);
                 break;
             case 'F':
-                result.y = 5;
+                result.setY(5);
                 break;
             case 'G':
-                result.y = 6;
+                result.setY(6);
                 break;
             case 'H':
-                result.y = 7;
+                result.setY(7);
                 break;
             default:
             
         }
-        switch (chessPos.number)
+        switch (chessPos.getNumber())
         {
             case 8:
-                result.x = 0;
+                result.setX(0);
                 break;
             case 7:
-                result.x = 1;
+                result.setX(1);
                 break;
             case 6:
-                result.x = 2;
+                result.setX(2);
                 break;
             case 5:
-                result.x = 3;
+                result.setX(3);
                 break;
             case 4:
-                result.x = 4;
+                result.setX(4);
                 break;
             case 3:
-                result.x = 5;
+                result.setX(5);
                 break;
             case 2:
-                result.x = 6;
+                result.setX(6);
                 break;
             case 1:
-                result.x = 7;
+                result.setX(7);
                 break;
             default:
             

@@ -10,8 +10,8 @@
  */
 public class ArrayPos {
 
-    int x;
-    int y;
+    private int x;
+    private int y;
 
     ArrayPos(int x, int y) {
         this.x = x;
@@ -34,6 +34,22 @@ public class ArrayPos {
         int result = 0;
         result = x + y;
         return result;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
 }
