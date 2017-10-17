@@ -5,10 +5,9 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,8 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -30,10 +27,10 @@ import javax.swing.event.DocumentListener;
  * @author makis
  */
 public class ShortestPathChessboardControls extends JFrame {
-    
+
     private JPanel topPanel, chessBoardPane, controlsPane;
     private JButton[][] squares = new JButton[8][8];
-    
+
     JLabel from = new JLabel("Path from node:");
     JTextField fromNode = new JTextField(2);
     JLabel to;
@@ -44,159 +41,139 @@ public class ShortestPathChessboardControls extends JFrame {
     ArrayPos currentFigurePos, currentTargetPos;
     ArrayPos defaultFigurePos = new ArrayPos(0, 0);
     String inputFigurePosStr;
-    
-    LinkedHashMap<ArrayPos, ChessBoardPos> ArrayNumToChessNumMap = new LinkedHashMap<ArrayPos, ChessBoardPos>();
-    
-    int row = 0;
-    int column = 0;
-    static int iterations = 0;
+
+    int iterations = 1;
+    int moves = 0;
+    boolean nodeIsFound = false;
+
+    LinkedList<ArrayPos> newList = new LinkedList<ArrayPos>();
+    ArrayPos temp;
+    Iterator<ArrayPos> itr;
+    LinkedList<ArrayPos> visitedNodes = new LinkedList<ArrayPos>();
+
     ImageIcon figure = new ImageIcon("horse.jpg");
     ImageIcon target = new ImageIcon("target.jpg");
-    
+
     public ShortestPathChessboardControls() {
         super("Shortest Path Chessboard");
-        
+
         topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
         getContentPane().add(topPanel);
-        
+
         createChessBoardPane();
         createInputPane();
 
-        //System.out.println(ArrayNumToChessNumMap);
-        for (Map.Entry<ArrayPos, ChessBoardPos> entry : ArrayNumToChessNumMap.entrySet())
-        {
-            ArrayPos key = entry.getKey();
-            ChessBoardPos b = entry.getValue();
-
-            //System.out.println(key.x + "," + key.y + " == " + b.letter + "," + b.number);
-        }
         //size of window
         setSize(500, 500);
         setResizable(false);
         setVisible(rootPaneCheckingEnabled);
-        
-        currentFigurePos = defaultFigurePos;
-        setFigurePos(currentFigurePos);
-        
+        setFigurePos(defaultFigurePos);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
     }
-    
+
     public void createChessBoardPane() {
         chessBoardPane = new JPanel();
         chessBoardPane.setLayout(new GridLayout(8, 8));
-        
+
         char let = 'H';
         short num = 8;
         JLabel numbers;//= new JLabel(" to node:");
         JLabel letters;//= new JLabel(" Output: ");
 
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
             //numbers = new JLabel(String.valueOf(num--));
             //chessBoardPane.add(numbers);
 
-            for (int j = 0; j < 8; j++)
-            {
+            for (int j = 0; j < 8; j++) {
                 squares[i][j] = new JButton();
-                
+
                 ArrayPos arrayPos = new ArrayPos(i, j);
 
                 //returns an object of chess kind!
                 ChessBoardPos chessPos = getChessBoardPos(arrayPos);
-                
+
                 squares[i][j].addActionListener(new ActionListener() {
-                    
+
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        
+
                         setTargetPos(arrayPos);
                     }
                 });
 
-                //mapper from i,j to chess position codes
-                ArrayNumToChessNumMap.put(arrayPos, chessPos);
-                
-                if ((i + j) % 2 != 0)
-                {
+                if ((i + j) % 2 != 0) {
                     squares[i][j].setBackground(java.awt.Color.GREEN);
-                } else
-                {
+                } else {
                     squares[i][j].setBackground(java.awt.Color.GRAY);
                 }
                 chessBoardPane.add(squares[i][j]);
-                
+
             }
 
             //System.out.println(let--);
         }
-        
+
         topPanel.add(chessBoardPane, BorderLayout.CENTER);
     }
-    
-    private void setFigurePos(ArrayPos arrayPos) {
-        squares[currentFigurePos.getX()][currentFigurePos.getY()].setIcon(null);
-        System.out.println(squares[arrayPos.getX()][arrayPos.getY()].getWidth());
-        System.out.println(squares[arrayPos.getX()][arrayPos.getY()].getHeight());
-        
-        figure = resizeIcon(figure, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
-        squares[arrayPos.getX()][arrayPos.getY()].setIcon(figure);
-        
-        currentFigurePos = arrayPos;
+
+    private void setFigurePos(ArrayPos pos) {
+        if (currentFigurePos != null) {
+            System.out.println("Previous x= " + currentFigurePos.getX() + " Previous y= " + currentFigurePos.getY());
+            squares[currentFigurePos.getX()][currentFigurePos.getY()].setIcon(null);
+        }
+        figure = resizeIcon(figure, squares[pos.getX()][pos.getY()].getWidth(), squares[pos.getX()][pos.getY()].getHeight());
+        System.out.println("New x= " + pos.getX() + " New y= " + pos.getY());
+        squares[pos.getX()][pos.getY()].setIcon(figure);
+        currentFigurePos = pos;
     }
-    
+
     public void createInputPane() {
-        
+
         controlsPane = new JPanel();
         controlsPane.setLayout(new BorderLayout());
-        
+
         JPanel inputs = new JPanel();
         inputs.setLayout(new FlowLayout());
-        
+
         from = new JLabel("Path from node:");
         fromNode = new JTextField(2);
         fromNode.setEditable(true);
-        
+
         fromNode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 validateInputAndSetFigurePos();
             }
         });
-        
+
         to = new JLabel(" to node:");
         toNode = new JTextArea(1, 2);
         toNode.setEditable(false);
         output = new JLabel(" Output: ");
         textArea = new JTextArea(1, 10);
         resetbtn = new JButton("Reset");
-        
+
         resetbtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-                if (e.getSource() == resetbtn)
-                {
-                    //set figure position to default node
-                    squares[currentFigurePos.getX()][currentFigurePos.getY()].setIcon(null);                    
+
+                if (e.getSource() == resetbtn) {
+                    //set figure position to default node                                  
                     setFigurePos(defaultFigurePos);
-                    
-                    currentFigurePos = defaultFigurePos;
-                    
+
                     //delete any target nodes
-                    if (currentTargetPos != null)
-                    {
+                    if (currentTargetPos != null) {
                         squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
                     }
                     fromNode.setText("");
                     toNode.setText("");
                     textArea.setText("");
-                    //default title and icon
                 }
             }
         });
-        
+
         textArea.setEditable(false);
         //resetbtn.setActionCommand("Reset");
 
@@ -206,165 +183,214 @@ public class ShortestPathChessboardControls extends JFrame {
         inputs.add(toNode);
         inputs.add(output);
         inputs.add(textArea);
-        
+
         controlsPane.add(inputs, BorderLayout.LINE_START);
         controlsPane.add(resetbtn, BorderLayout.LINE_END);
-        
+
         topPanel.add(controlsPane, BorderLayout.PAGE_END);
     }
 
-    //method that calculates the s
-    private void /*LinkedList<ArrayPos>*/ calculateShortestPath(ArrayPos figurePos) {
-        
-        int row = figurePos.getX();
-        int col = figurePos.getY();
-        int i = 0;
-        
-        ArrayPos[] nodes = new ArrayPos[8];
-        //List to contain all possible nodes
-        LinkedList<ArrayPos> possibleSquares = new LinkedList<ArrayPos>();
-        
-        if ((row >= 0 && row <= 7) && (col >= 0 && col <= 7))
-        {
-            nodes[0] = new ArrayPos(row - 2, col - 1);
-            nodes[1] = new ArrayPos(row - 1, col - 2);
-            nodes[2] = new ArrayPos(row - 2, col + 1);
-            nodes[3] = new ArrayPos(row - 1, col + 2);
-            nodes[4] = new ArrayPos(row + 1, col - 2);
-            nodes[5] = new ArrayPos(row + 2, col - 1);
-            nodes[6] = new ArrayPos(row + 1, col + 2);
-            nodes[7] = new ArrayPos(row + 2, col + 1);
-            
-            for (int j = 0; j < nodes.length; j++)
-            {
-                //add only valid squares that are on board
-                if (isSquareOnBoard(nodes[j]))
-                {
-                    possibleSquares.add(nodes[j]);
-                }
-            }
-            for (ArrayPos a : possibleSquares)
-            {
-                System.out.println("Possible moves to nodes" + a.getX() + "," + a.getY());
-            }
-            System.out.println("Does list contain target= " + possibleSquares.contains(currentTargetPos));
-/*            
-            while (!possibleSquares.contains(currentTargetPos))
-            {
-                for (ArrayPos a : possibleSquares)
-                {
-                    calculateShortestPath(a);
-                }
-                
-            }
-*/
-        }
-
-        //chessPos = getChessBoardPos(arrayPos);        
-        //textArea.setText("Button: " + chessPos.letter + chessPos.number);
-    }
-    
     private static ImageIcon resizeIcon(ImageIcon icon, int resizedWidth, int resizedHeight) {
         Image img = icon.getImage();
         Image resizedImage = img.getScaledInstance(resizedWidth, resizedHeight, java.awt.Image.SCALE_SMOOTH);
         return new ImageIcon(resizedImage);
     }
-    
+
     private boolean isSquareOnBoard(ArrayPos a) {
-        if ((a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7))
-        {
+        if ((a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7)) {
             return true;
         }
         return false;
     }
-    
-    private void setTargetPos(ArrayPos arrayPos) {
-        if (currentFigurePos != null)
-        {
-            if (currentTargetPos != null)
-            {
-                System.out.println("arrayPos.x= " + arrayPos.getX() + " arrayPos.y= " + arrayPos.getY());
-                System.out.println("currentFigurePos.x= " + arrayPos.getX() + " currentFigurePos.y= " + arrayPos.getY());
-                
-                if (arrayPos.equals(currentFigurePos))
-                {
+
+    private void setTargetPos(ArrayPos aPos) {
+        if (currentFigurePos != null) {
+            if (currentTargetPos != null) {
+                //System.out.println("aPos.x= " + aPos.getX() + " aPos.y= " + aPos.getY());
+
+                if (aPos.equals(currentFigurePos)) {
                     //alert to select new target and null the target
                     System.out.println("CurrentTargetPos is equal to CurrentFigurePos");
                     //delete the previous target icon
                     squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
-                    
-                } else
-                {
+                    toNode.setText(null);
+
+                } else {
                     System.out.println("CurrentTargetPos is NOT null");
                     squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
-                    System.out.println("Previous TargetPos.x= " + currentTargetPos.getX() + " Previous TargetPos.y= " + currentTargetPos.getY());
-                    System.out.println("CurrentFigurePos.x= " + currentFigurePos.getX() + " CurrentFigurePos.y= " + currentFigurePos.getY());
-                    target = resizeIcon(target, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
-                    squares[arrayPos.getX()][arrayPos.getY()].setIcon(target);
-                    currentTargetPos = arrayPos;
+                    //System.out.println("Previous TargetPos.x= " + currentTargetPos.getX() + " Previous TargetPos.y= " + currentTargetPos.getY());
+                    //System.out.println("CurrentFigurePos.x= " + currentFigurePos.getX() + " CurrentFigurePos.y= " + currentFigurePos.getY());
+                    target = resizeIcon(target, squares[aPos.getX()][aPos.getY()].getWidth(), squares[aPos.getX()][aPos.getY()].getHeight());
+                    squares[aPos.getX()][aPos.getY()].setIcon(target);
+                    currentTargetPos = aPos;
                     ChessBoardPos currentChessPos = getChessBoardPos(currentTargetPos);
                     toNode.setText(currentChessPos.getLetter() + String.valueOf(currentChessPos.getNumber()));
-                    calculateShortestPath(currentFigurePos);
+                    //first level list - list of root node
+                    LinkedList<ArrayPos> firstLevelList = calcHorsePossibleNextNodes(currentFigurePos);
+                    calculateShortestPath(firstLevelList);
+                    System.out.println("Visited path nodes: ");
+                    if (visitedNodes.size() > 0) {
+                        for (ArrayPos a : visitedNodes) {
+                            System.out.println(a.getX() + "," + a.getY());
+                        }
+                    }
                 }
-                
-            } else
-            {
+
+            } else {
                 System.out.println("CurrentTargetPos is NULL!");
-                target = resizeIcon(target, squares[arrayPos.getX()][arrayPos.getY()].getWidth(), squares[arrayPos.getX()][arrayPos.getY()].getHeight());
-                squares[arrayPos.getX()][arrayPos.getY()].setIcon(target);
-                currentTargetPos = arrayPos;
+                target = resizeIcon(target, squares[aPos.getX()][aPos.getY()].getWidth(), squares[aPos.getX()][aPos.getY()].getHeight());
+                squares[aPos.getX()][aPos.getY()].setIcon(target);
+                currentTargetPos = aPos;
                 ChessBoardPos currentChessPos = getChessBoardPos(currentTargetPos);
                 toNode.setText(currentChessPos.getLetter() + String.valueOf(currentChessPos.getNumber()));
-                calculateShortestPath(currentFigurePos);
+                //first level list - list of root node
+                LinkedList<ArrayPos> firstLevelList = calcHorsePossibleNextNodes(currentFigurePos);
+                calculateShortestPath(firstLevelList);
+                System.out.println("Visited path nodes: ");
+                if (visitedNodes.size() > 0) {
+                    for (ArrayPos a : visitedNodes) {
+                        System.out.println(a.getX() + "," + a.getY());
+                    }
+                }
             }
         }
-        
+
     }
-    
+
+    //method that calculates the s
+    private void calculateShortestPath(LinkedList<ArrayPos> list) {
+
+        if (iterations < 3 && !list.isEmpty()) {
+            if (list.contains(currentTargetPos)) {
+                //visitedNodes.add(currentTargetPos);
+                System.out.println("Node found in " + iterations + " iterations!");
+                //textArea.setText((getChessBoardPos(figurePos).toString()) + " -> " + getChessBoardPos(currentTargetPos).toString());
+                return;
+            } else {
+
+                System.out.println("Possible moves to nodes: ");
+
+                itr = list.iterator();
+                while (itr.hasNext()) {
+
+                    temp = itr.next();
+
+                    //add every node we visit in visited nodes list in order not to visit it again
+                    visitedNodes.add(temp);
+
+                    System.out.println("( " + temp.getX() + "," + temp.getY() + " )");
+
+                    
+                    
+                    if (newList != null && !newList.isEmpty()) {
+                        newList.clear();
+                    }
+                    newList.addAll(list);
+                    
+                    
+                    //newList = list;
+                    
+                    //list of unvisited possible next nodes
+                    LinkedList<ArrayPos> notVisitedPossibleNodes = calcHorsePossibleNextNodes(temp);
+                    //itr.remove();
+
+                    if (!notVisitedPossibleNodes.isEmpty()) {
+
+                        //remove visited element from the list
+                        //itr.remove();
+                        newList.addAll(notVisitedPossibleNodes);
+                    } else {
+                        System.out.println("Node is NOT FOUND in " + iterations + " iterations!");
+                        return;
+                    }
+                }
+
+                //when there is no next node in this level call calculateShortestPath with newList as argument
+                calculateShortestPath(newList);
+                //next level
+                iterations++;
+            }
+        } else {
+            System.out.println("Node is NOT found in " + iterations + " iterations!");
+            return;
+        }
+        //}
+
+        //chessPos = getChessBoardPos(arrayPos);        
+        //textArea.setText("Button: " + chessPos.letter + chessPos.number);
+    }
+
+    private LinkedList<ArrayPos> calcHorsePossibleNextNodes(ArrayPos a) {
+
+        int row = a.getX();
+        int col = a.getY();
+        ArrayPos[] nodes = new ArrayPos[8];
+        //List to contain all possible nodes
+        LinkedList<ArrayPos> possibleSquares = new LinkedList<ArrayPos>();
+
+        //all possible next squares for horse figure based on horse moves pattern
+        nodes[0] = new ArrayPos(row - 2, col - 1);
+        nodes[1] = new ArrayPos(row - 1, col - 2);
+        nodes[2] = new ArrayPos(row - 2, col + 1);
+        nodes[3] = new ArrayPos(row - 1, col + 2);
+        nodes[4] = new ArrayPos(row + 1, col - 2);
+        nodes[5] = new ArrayPos(row + 2, col - 1);
+        nodes[6] = new ArrayPos(row + 1, col + 2);
+        nodes[7] = new ArrayPos(row + 2, col + 1);
+
+        for (int j = 0; j < nodes.length; j++) {
+            //add only valid squares that are on board and has not been visited
+            if (isSquareOnBoard(nodes[j]) && !visitedNodes.contains(nodes[j])) {
+                possibleSquares.add(nodes[j]);
+            }
+        }
+        if (!visitedNodes.isEmpty()) {
+            possibleSquares.removeAll(visitedNodes);
+        }
+        return possibleSquares;
+    }
+
     private void validateInputAndSetFigurePos() {
-        
+
         inputFigurePosStr = fromNode.getText().trim();
 
         //sets the figure to the selected position!
-        if (!inputFigurePosStr.equals("") && (inputFigurePosStr.length() == 2) && inputFigurePosStr.matches("[a-hA-H][1-8]"))
-        {
+        if (!inputFigurePosStr.equals("") && (inputFigurePosStr.length() == 2) && inputFigurePosStr.matches("[a-hA-H][1-8]")) {
             char letter = inputFigurePosStr.charAt(0);
             int number = Character.getNumericValue(inputFigurePosStr.charAt(1));
-            
-            System.out.println("The input String is valid and is: " + inputFigurePosStr);
 
+            //System.out.println("The input String is valid and is: " + inputFigurePosStr);
             //in case the input letter is in lower case, make it upper case
-            if (Character.isLowerCase(letter))
-            {
+            if (Character.isLowerCase(letter)) {
                 letter = Character.toUpperCase(letter);
             }
-            
+
             ChessBoardPos inputChessPos = new ChessBoardPos(letter, number);
-            System.out.println("inputChessPos.letter= " + inputChessPos.getLetter() + " inputChessPos.number= " + inputChessPos.getNumber());
-            
+            //System.out.println("inputChessPos.letter= " + inputChessPos.getLetter() + " inputChessPos.number= " + inputChessPos.getNumber());
+
             ArrayPos inputPos = getArrayPos(inputChessPos);
-            System.out.println("inputPos.x= " + inputPos.getX() + " inputPos.y= " + inputPos.getY());
-            
-            squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
+            //System.out.println("inputPos.x= " + inputPos.getX() + " inputPos.y= " + inputPos.getY());
+
             //change the figure position to inputted position value 
+            squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
+            toNode.setText(null);
+            //since the figure position is changed, there are not aany visited nodes
+            visitedNodes.clear();
             setFigurePos(inputPos);
-            
-            
+
         } //if there is no input for desired figure porisition, set figure to default position (0,0)
-        else
-        {
+        else {
             JOptionPane.showMessageDialog(this, "Invalid square coordinates");
             fromNode.setText(null);
-            currentFigurePos = defaultFigurePos;
+            //setFigurePos(defaultFigurePos);
         }
     }
-    
-    private ChessBoardPos getChessBoardPos(ArrayPos arrayPos) {
-        
+
+    private ChessBoardPos getChessBoardPos(ArrayPos arPos) {
+
         ChessBoardPos result = new ChessBoardPos('\u0000', 0);
-        
-        switch (arrayPos.getY())
-        {
+
+        switch (arPos.getY()) {
             case 0:
                 result.setLetter('A');
                 break;
@@ -372,10 +398,10 @@ public class ShortestPathChessboardControls extends JFrame {
                 result.setLetter('B');
                 break;
             case 2:
-                result.setLetter('C');                
+                result.setLetter('C');
                 break;
             case 3:
-                result.setLetter('D'); 
+                result.setLetter('D');
                 break;
             case 4:
                 result.setLetter('E');
@@ -390,10 +416,9 @@ public class ShortestPathChessboardControls extends JFrame {
                 result.setLetter('H');
                 break;
             default:
-            
+
         }
-        switch (arrayPos.getX())
-        {
+        switch (arPos.getX()) {
             case 0:
                 result.setNumber(8);
                 break;
@@ -419,17 +444,16 @@ public class ShortestPathChessboardControls extends JFrame {
                 result.setNumber(1);
                 break;
             default:
-            
+
         }
         return result;
     }
-    
+
     private ArrayPos getArrayPos(ChessBoardPos chessPos) {
-        
+
         ArrayPos result = new ArrayPos(0, 0);
-        
-        switch (chessPos.getLetter())
-        {
+
+        switch (chessPos.getLetter()) {
             case 'A':
                 result.setY(0);
                 break;
@@ -455,10 +479,9 @@ public class ShortestPathChessboardControls extends JFrame {
                 result.setY(7);
                 break;
             default:
-            
+
         }
-        switch (chessPos.getNumber())
-        {
+        switch (chessPos.getNumber()) {
             case 8:
                 result.setX(0);
                 break;
@@ -484,7 +507,7 @@ public class ShortestPathChessboardControls extends JFrame {
                 result.setX(7);
                 break;
             default:
-            
+
         }
         return result;
     }

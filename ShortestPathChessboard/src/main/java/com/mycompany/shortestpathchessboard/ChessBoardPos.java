@@ -18,6 +18,12 @@ public class ChessBoardPos {
         this.number = number;
     }
 
+    public String toString()
+    {
+        String result = String.valueOf(letter).concat(String.valueOf(number));
+        return result;
+    }
+        
     public char getLetter() {
         return letter;
     }
