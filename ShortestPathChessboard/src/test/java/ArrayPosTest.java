@@ -42,13 +42,11 @@ public class ArrayPosTest {
     @Test
     public void testEquals() {
         System.out.println("equals");
-        Object o = null;
-        ArrayPos instance = null;
-        boolean expResult = false;
-        boolean result = instance.equals(o);
+        ArrayPos instance = new ArrayPos(1, 2);
+        ArrayPos secInstance = new ArrayPos(1, 2);        
+        boolean expResult = true;
+        boolean result = instance.equals(instance);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -57,12 +55,11 @@ public class ArrayPosTest {
     @Test
     public void testHashCode() {
         System.out.println("hashCode");
-        ArrayPos instance = null;
-        int expResult = 0;
+        ArrayPos instance = new ArrayPos(1, 2);
+        ArrayPos secInstance = new ArrayPos(1, 2);
+        int expResult = secInstance.hashCode();        
         int result = instance.hashCode();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -71,12 +68,10 @@ public class ArrayPosTest {
     @Test
     public void testGetX() {
         System.out.println("getX");
-        ArrayPos instance = null;
-        int expResult = 0;
+        ArrayPos instance = new ArrayPos(1, 2);
+        int expResult = 1;
         int result = instance.getX();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -85,11 +80,10 @@ public class ArrayPosTest {
     @Test
     public void testSetX() {
         System.out.println("setX");
-        int x = 0;
-        ArrayPos instance = null;
+        int x = 4;
+        ArrayPos instance = new ArrayPos(0, 0);
         instance.setX(x);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(x, instance.getX());        
     }
 
     /**
@@ -98,12 +92,10 @@ public class ArrayPosTest {
     @Test
     public void testGetY() {
         System.out.println("getY");
-        ArrayPos instance = null;
-        int expResult = 0;
+        ArrayPos instance = new ArrayPos(1, 2);
+        int expResult = 2;
         int result = instance.getY();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -112,11 +104,10 @@ public class ArrayPosTest {
     @Test
     public void testSetY() {
         System.out.println("setY");
-        int y = 0;
-        ArrayPos instance = null;
+        int y = 7;
+        ArrayPos instance = new ArrayPos(0, 0);
         instance.setY(y);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(y, instance.getY());
     }
     
 }

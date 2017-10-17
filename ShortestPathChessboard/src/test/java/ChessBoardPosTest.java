@@ -42,12 +42,11 @@ public class ChessBoardPosTest {
     @Test
     public void testGetLetter() {
         System.out.println("getLetter");
-        ChessBoardPos instance = null;
-        char expResult = ' ';
+        ChessBoardPos instance = new ChessBoardPos('A', 0);
+        char expResult = 'A';
         char result = instance.getLetter();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -56,11 +55,11 @@ public class ChessBoardPosTest {
     @Test
     public void testSetLetter() {
         System.out.println("setLetter");
-        char letter = ' ';
-        ChessBoardPos instance = null;
+        char letter = 'A';
+        ChessBoardPos instance = new ChessBoardPos('C', 0);
         instance.setLetter(letter);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        char expResult = instance.getLetter();
+        assertEquals(expResult, letter);
     }
 
     /**
@@ -69,12 +68,10 @@ public class ChessBoardPosTest {
     @Test
     public void testGetNumber() {
         System.out.println("getNumber");
-        ChessBoardPos instance = null;
-        int expResult = 0;
+        ChessBoardPos instance = new ChessBoardPos('A', 4);
+        int expResult = 4;
         int result = instance.getNumber();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -83,11 +80,11 @@ public class ChessBoardPosTest {
     @Test
     public void testSetNumber() {
         System.out.println("setNumber");
-        int number = 0;
-        ChessBoardPos instance = null;
+        int number = 12;
+        ChessBoardPos instance = new ChessBoardPos('C', 0);;
         instance.setNumber(number);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int result = instance.getNumber();
+        assertEquals(number, result);        
     }
     
 }
