@@ -1,9 +1,13 @@
+package com.mycompany.shortestpathchessboardtest;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
+import com.mycompany.shortestpathchessboard.ArrayPos;
+import com.mycompany.shortestpathchessboard.ShortestPathChessboardControls;
 import com.mycompany.shortestpathchessboard.ShortestPathChessboardControls;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,18 +62,7 @@ public class ShortestPathChessboardControlsTest {
         instance.createInputPane();
     }
 
-//    @Test
-//
-//    public void TestIsSquareOnBoard() {
-//        System.out.println("isSquareOnBoard");
-//        
-//        ArrayPos test = new ArrayPos(4, 5);
-//        ShortestPathChessboardControls instance = new ShortestPathChessboardControls();
-//        instance.isSquareOnBoard(test);
-//        
-//        
-//
-//    }
+
 //
 //    /**
 //     * Test of calcHorsePossibleNextNodes method, of class
