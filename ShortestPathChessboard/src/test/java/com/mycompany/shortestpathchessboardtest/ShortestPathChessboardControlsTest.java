@@ -6,8 +6,6 @@ package com.mycompany.shortestpathchessboardtest;
  * and open the template in the editor.
  */
 
-import com.mycompany.shortestpathchessboard.ArrayPos;
-import com.mycompany.shortestpathchessboard.ShortestPathChessboardControls;
 import com.mycompany.shortestpathchessboard.ShortestPathChessboardControls;
 import org.junit.After;
 import org.junit.AfterClass;
