@@ -1,12 +1,10 @@
-package com.mycompany.shortestpathchessboardtest;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package com.mycompany.shortestpathchessboard;
 
-import com.mycompany.shortestpathchessboard.ArrayPos;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,11 +43,13 @@ public class ArrayPosTest {
     @Test
     public void testEquals() {
         System.out.println("equals");
-        ArrayPos instance = new ArrayPos(1, 2);
-        ArrayPos secInstance = new ArrayPos(1, 2);        
-        boolean expResult = true;
-        boolean result = instance.equals(instance);
+        Object o = null;
+        ArrayPos instance = null;
+        boolean expResult = false;
+        boolean result = instance.equals(o);
         assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
     /**
@@ -58,11 +58,12 @@ public class ArrayPosTest {
     @Test
     public void testHashCode() {
         System.out.println("hashCode");
-        ArrayPos instance = new ArrayPos(1, 2);
-        ArrayPos secInstance = new ArrayPos(1, 2);
-        int expResult = secInstance.hashCode();        
+        ArrayPos instance = null;
+        int expResult = 0;
         int result = instance.hashCode();
         assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
     /**
@@ -71,10 +72,12 @@ public class ArrayPosTest {
     @Test
     public void testGetX() {
         System.out.println("getX");
-        ArrayPos instance = new ArrayPos(1, 2);
-        int expResult = 1;
+        ArrayPos instance = null;
+        int expResult = 0;
         int result = instance.getX();
         assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
     /**
@@ -83,10 +86,11 @@ public class ArrayPosTest {
     @Test
     public void testSetX() {
         System.out.println("setX");
-        int x = 4;
-        ArrayPos instance = new ArrayPos(0, 0);
+        int x = 0;
+        ArrayPos instance = null;
         instance.setX(x);
-        assertEquals(x, instance.getX());        
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
     /**
@@ -95,10 +99,12 @@ public class ArrayPosTest {
     @Test
     public void testGetY() {
         System.out.println("getY");
-        ArrayPos instance = new ArrayPos(1, 2);
-        int expResult = 2;
+        ArrayPos instance = null;
+        int expResult = 0;
         int result = instance.getY();
         assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
     /**
@@ -107,10 +113,11 @@ public class ArrayPosTest {
     @Test
     public void testSetY() {
         System.out.println("setY");
-        int y = 7;
-        ArrayPos instance = new ArrayPos(0, 0);
+        int y = 0;
+        ArrayPos instance = null;
         instance.setY(y);
-        assertEquals(y, instance.getY());
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
     
 }

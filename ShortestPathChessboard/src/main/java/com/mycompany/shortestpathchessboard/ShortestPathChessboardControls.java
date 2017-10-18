@@ -210,11 +210,7 @@ public final class ShortestPathChessboardControls extends JFrame {
     }
 
     private boolean isSquareOnBoard(ArrayPos a) {
-        if ((a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7))
-        {
-            return true;
-        }
-        return false;
+        return (a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7);
     }
 
     private void setTargetPos(ArrayPos aPos) {
