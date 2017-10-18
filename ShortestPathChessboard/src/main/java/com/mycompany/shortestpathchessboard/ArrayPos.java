@@ -1,5 +1,3 @@
-package com.mycompany.shortestpathchessboard;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,7 +13,7 @@ public class ArrayPos {
     private int x;
     private int y;
 
-    public ArrayPos(int x, int y) {
+    ArrayPos(int x, int y) {
         this.x = x;
         this.y = y;
     }

@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-import com.mycompany.shortestpathchessboard.ArrayPos;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -1,5 +1,3 @@
-package com.mycompany.shortestpathchessboard;
-
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -8,7 +6,9 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -354,7 +354,7 @@ public class ShortestPathChessboardControls extends JFrame {
                 for (int count = 0; count < list.size(); count++)
                 {
 
-                    temp = list.get(count);
+                    ArrayPos temp = list.get(count);
 
                     //add every node we visit in visited nodes list in order not to visit it again               
                     visitedNodes.add(temp);
