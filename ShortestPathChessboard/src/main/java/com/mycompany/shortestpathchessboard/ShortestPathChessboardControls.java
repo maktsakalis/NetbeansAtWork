@@ -1,3 +1,5 @@
+package com.mycompany.shortestpathchessboard;
+
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -5,9 +7,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,7 +35,6 @@ public class ShortestPathChessboardControls extends JFrame {
     JLabel from = new JLabel("Path from node:");
     JTextField fromNode = new JTextField(2);
     JLabel to;
-    //JTextField toNode;
     JLabel output;
     JTextArea textArea, toNode;
     JButton resetbtn;
@@ -42,17 +42,23 @@ public class ShortestPathChessboardControls extends JFrame {
     ArrayPos defaultFigurePos = new ArrayPos(0, 0);
     String inputFigurePosStr;
 
-    int iterations = 1;
     int moves = 0;
-    boolean nodeIsFound = false;
 
     LinkedList<ArrayPos> newList = new LinkedList<ArrayPos>();
+    ArrayList<LinkedList> levelListsCollector = new ArrayList<LinkedList>();
+
     ArrayPos temp;
-    Iterator<ArrayPos> itr;
+
+    String failure = "Node is not found!";
+
+    ChessBoardPos root;
+    ChessBoardPos tar;
+
     LinkedList<ArrayPos> visitedNodes = new LinkedList<ArrayPos>();
 
     ImageIcon figure = new ImageIcon("horse.jpg");
     ImageIcon target = new ImageIcon("target.jpg");
+    private boolean foundInFirstTry = false;
 
     public ShortestPathChessboardControls() {
         super("Shortest Path Chessboard");
@@ -82,11 +88,13 @@ public class ShortestPathChessboardControls extends JFrame {
         JLabel numbers;//= new JLabel(" to node:");
         JLabel letters;//= new JLabel(" Output: ");
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
+        {
             //numbers = new JLabel(String.valueOf(num--));
             //chessBoardPane.add(numbers);
 
-            for (int j = 0; j < 8; j++) {
+            for (int j = 0; j < 8; j++)
+            {
                 squares[i][j] = new JButton();
 
                 ArrayPos arrayPos = new ArrayPos(i, j);
@@ -103,9 +111,11 @@ public class ShortestPathChessboardControls extends JFrame {
                     }
                 });
 
-                if ((i + j) % 2 != 0) {
+                if ((i + j) % 2 != 0)
+                {
                     squares[i][j].setBackground(java.awt.Color.GREEN);
-                } else {
+                } else
+                {
                     squares[i][j].setBackground(java.awt.Color.GRAY);
                 }
                 chessBoardPane.add(squares[i][j]);
@@ -119,7 +129,8 @@ public class ShortestPathChessboardControls extends JFrame {
     }
 
     private void setFigurePos(ArrayPos pos) {
-        if (currentFigurePos != null) {
+        if (currentFigurePos != null)
+        {
             System.out.println("Previous x= " + currentFigurePos.getX() + " Previous y= " + currentFigurePos.getY());
             squares[currentFigurePos.getX()][currentFigurePos.getY()].setIcon(null);
         }
@@ -159,12 +170,14 @@ public class ShortestPathChessboardControls extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (e.getSource() == resetbtn) {
+                if (e.getSource() == resetbtn)
+                {
                     //set figure position to default node                                  
                     setFigurePos(defaultFigurePos);
 
                     //delete any target nodes
-                    if (currentTargetPos != null) {
+                    if (currentTargetPos != null)
+                    {
                         squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
                     }
                     fromNode.setText("");
@@ -197,25 +210,30 @@ public class ShortestPathChessboardControls extends JFrame {
     }
 
     private boolean isSquareOnBoard(ArrayPos a) {
-        if ((a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7)) {
+        if ((a.getX() >= 0 && a.getX() <= 7) && (a.getY() >= 0 && a.getY() <= 7))
+        {
             return true;
         }
         return false;
     }
 
     private void setTargetPos(ArrayPos aPos) {
-        if (currentFigurePos != null) {
-            if (currentTargetPos != null) {
+        if (currentFigurePos != null)
+        {
+            if (currentTargetPos != null)
+            {
                 //System.out.println("aPos.x= " + aPos.getX() + " aPos.y= " + aPos.getY());
 
-                if (aPos.equals(currentFigurePos)) {
+                if (aPos.equals(currentFigurePos))
+                {
                     //alert to select new target and null the target
                     System.out.println("CurrentTargetPos is equal to CurrentFigurePos");
                     //delete the previous target icon
                     squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
                     toNode.setText(null);
 
-                } else {
+                } else
+                {
                     System.out.println("CurrentTargetPos is NOT null");
                     squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
                     //System.out.println("Previous TargetPos.x= " + currentTargetPos.getX() + " Previous TargetPos.y= " + currentTargetPos.getY());
@@ -227,16 +245,45 @@ public class ShortestPathChessboardControls extends JFrame {
                     toNode.setText(currentChessPos.getLetter() + String.valueOf(currentChessPos.getNumber()));
                     //first level list - list of root node
                     LinkedList<ArrayPos> firstLevelList = calcHorsePossibleNextNodes(currentFigurePos);
+                    StringBuilder sb = new StringBuilder("");
+                    root = getChessBoardPos(currentFigurePos);
+                    tar = getChessBoardPos(currentTargetPos);
+
                     calculateShortestPath(firstLevelList);
-                    System.out.println("Visited path nodes: ");
-                    if (visitedNodes.size() > 0) {
-                        for (ArrayPos a : visitedNodes) {
-                            System.out.println(a.getX() + "," + a.getY());
+                    if (isTargetNodeFoundYet())
+                    {
+
+                        System.out.println("Visited path nodes: ");
+
+                        if (visitedNodes.size() > 0)
+                        {
+                            sb.append(root.toString()).append("->");
+                            for (ArrayPos node : visitedNodes)
+                            {
+                                sb.append(String.valueOf(getChessBoardPos(node).toString() + "->"));
+                                //textArea.
+                            }
+                            sb.append(tar.toString());
+                            System.out.println(sb.toString());
+                            textArea.setText(sb.toString());
+                        }
+                    } else
+                    {
+                        if (foundInFirstTry)
+                        {
+                            sb.append(root.toString()).append("->").append(tar.toString());
+                            textArea.setText(sb.toString());
+                            System.out.println(sb.toString());
+                        } else
+                        {
+                            textArea.setText(failure);
                         }
                     }
+
                 }
 
-            } else {
+            } else
+            {
                 System.out.println("CurrentTargetPos is NULL!");
                 target = resizeIcon(target, squares[aPos.getX()][aPos.getY()].getWidth(), squares[aPos.getX()][aPos.getY()].getHeight());
                 squares[aPos.getX()][aPos.getY()].setIcon(target);
@@ -245,11 +292,39 @@ public class ShortestPathChessboardControls extends JFrame {
                 toNode.setText(currentChessPos.getLetter() + String.valueOf(currentChessPos.getNumber()));
                 //first level list - list of root node
                 LinkedList<ArrayPos> firstLevelList = calcHorsePossibleNextNodes(currentFigurePos);
+                StringBuilder sb = new StringBuilder("");
+                root = getChessBoardPos(currentFigurePos);
+                tar = getChessBoardPos(currentTargetPos);
                 calculateShortestPath(firstLevelList);
-                System.out.println("Visited path nodes: ");
-                if (visitedNodes.size() > 0) {
-                    for (ArrayPos a : visitedNodes) {
-                        System.out.println(a.getX() + "," + a.getY());
+
+                if (isTargetNodeFoundYet())
+                {
+                    root = getChessBoardPos(currentFigurePos);
+                    tar = getChessBoardPos(currentTargetPos);
+                    System.out.println("Visited path nodes: ");
+
+                    if (visitedNodes.size() > 0)
+                    {
+                        sb.append(root.toString()).append("->");
+                        for (ArrayPos node : visitedNodes)
+                        {
+                            sb.append(String.valueOf(getChessBoardPos(node).toString() + "->"));
+                            //textArea.
+                        }
+                        sb.append(tar.toString());
+                        System.out.println(sb.toString());
+                        textArea.setText(sb.toString());
+                    }
+                } else
+                {
+                    if (foundInFirstTry)
+                    {
+                        sb.append(root.toString()).append("->").append(tar.toString());
+                        textArea.setText(sb.toString());
+                        System.out.println(sb.toString());
+                    } else
+                    {
+                        textArea.setText(failure);
                     }
                 }
             }
@@ -259,65 +334,62 @@ public class ShortestPathChessboardControls extends JFrame {
 
     //method that calculates the s
     private void calculateShortestPath(LinkedList<ArrayPos> list) {
+        LinkedList<ArrayPos> notVisitedPossibleNodes = new LinkedList<ArrayPos>();
 
-        if (iterations < 3 && !list.isEmpty()) {
-            if (list.contains(currentTargetPos)) {
-                //visitedNodes.add(currentTargetPos);
-                System.out.println("Node found in " + iterations + " iterations!");
-                //textArea.setText((getChessBoardPos(figurePos).toString()) + " -> " + getChessBoardPos(currentTargetPos).toString());
+        if (moves < 3)
+        {
+            System.out.println("Searching for node: ( " + currentTargetPos.getX() + "," + currentTargetPos.getY() + " ) --> ( " + getChessBoardPos(currentTargetPos) + " )");
+
+            if (list.contains(currentTargetPos))
+            {
+                visitedNodes.add(currentTargetPos);
+                System.out.println("Node found in " + moves + " moves!");
+                foundInFirstTry = true;
                 return;
-            } else {
-
+            } else
+            {
                 System.out.println("Possible moves to nodes: ");
+                System.out.println("List size= " + list.size());
 
-                itr = list.iterator();
-                while (itr.hasNext()) {
+                for (int count = 0; count < list.size(); count++)
+                {
 
-                    temp = itr.next();
+                    temp = list.get(count);
 
-                    //add every node we visit in visited nodes list in order not to visit it again
+                    //add every node we visit in visited nodes list in order not to visit it again               
                     visitedNodes.add(temp);
 
-                    System.out.println("( " + temp.getX() + "," + temp.getY() + " )");
+                    System.out.println("Iteration: " + moves + " Node= ( " + temp.getX() + "," + temp.getY() + " )");
+                    notVisitedPossibleNodes = calcHorsePossibleNextNodes(temp);
 
-                    
-                    
-                    if (newList != null && !newList.isEmpty()) {
-                        newList.clear();
-                    }
-                    newList.addAll(list);
-                    
-                    
-                    //newList = list;
-                    
-                    //list of unvisited possible next nodes
-                    LinkedList<ArrayPos> notVisitedPossibleNodes = calcHorsePossibleNextNodes(temp);
-                    //itr.remove();
+                    System.out.println("notVisitedPossibleNodes.size():  " + notVisitedPossibleNodes.size());
 
-                    if (!notVisitedPossibleNodes.isEmpty()) {
-
-                        //remove visited element from the list
-                        //itr.remove();
-                        newList.addAll(notVisitedPossibleNodes);
-                    } else {
-                        System.out.println("Node is NOT FOUND in " + iterations + " iterations!");
-                        return;
+                    if (!(notVisitedPossibleNodes.isEmpty()))
+                    {
+                        System.out.println("notVisitedPossibleNodes is not empty!");
+                        levelListsCollector.add(notVisitedPossibleNodes);
+                        moves++;
                     }
                 }
-
-                //when there is no next node in this level call calculateShortestPath with newList as argument
-                calculateShortestPath(newList);
-                //next level
-                iterations++;
+                calculateShortestPath(notVisitedPossibleNodes);
             }
-        } else {
-            System.out.println("Node is NOT found in " + iterations + " iterations!");
-            return;
         }
-        //}
+    }
 
-        //chessPos = getChessBoardPos(arrayPos);        
-        //textArea.setText("Button: " + chessPos.letter + chessPos.number);
+    private boolean isTargetNodeFoundYet() {
+
+        System.out.println("levelListsCollector.size()= " + levelListsCollector.size());
+
+        for (LinkedList l : levelListsCollector)
+        {
+            if (l.contains(currentTargetPos))
+            {
+                System.out.println("currentTargetPos is FOUND in " + moves + " moves!");
+                return true;
+            }
+        }
+        System.out.println("currentTargetPos is NOT FOUND in " + moves + " moves.");
+        return false;
     }
 
     private LinkedList<ArrayPos> calcHorsePossibleNextNodes(ArrayPos a) {
@@ -325,7 +397,7 @@ public class ShortestPathChessboardControls extends JFrame {
         int row = a.getX();
         int col = a.getY();
         ArrayPos[] nodes = new ArrayPos[8];
-        //List to contain all possible nodes
+        //List to contain all possible nodesArrayPos
         LinkedList<ArrayPos> possibleSquares = new LinkedList<ArrayPos>();
 
         //all possible next squares for horse figure based on horse moves pattern
@@ -338,14 +410,14 @@ public class ShortestPathChessboardControls extends JFrame {
         nodes[6] = new ArrayPos(row + 1, col + 2);
         nodes[7] = new ArrayPos(row + 2, col + 1);
 
-        for (int j = 0; j < nodes.length; j++) {
+        for (int j = 0; j < nodes.length; j++)
+        {
             //add only valid squares that are on board and has not been visited
-            if (isSquareOnBoard(nodes[j]) && !visitedNodes.contains(nodes[j])) {
+            if (isSquareOnBoard(nodes[j]) && !nodes[j].equals(currentFigurePos) && !visitedNodes.contains(nodes[j]))
+            {
+                System.out.println("calcHorsePossibleNextNodes: Node to be added: ( " + nodes[j].getX() + "," + nodes[j].getY() + " )");
                 possibleSquares.add(nodes[j]);
             }
-        }
-        if (!visitedNodes.isEmpty()) {
-            possibleSquares.removeAll(visitedNodes);
         }
         return possibleSquares;
     }
@@ -355,34 +427,41 @@ public class ShortestPathChessboardControls extends JFrame {
         inputFigurePosStr = fromNode.getText().trim();
 
         //sets the figure to the selected position!
-        if (!inputFigurePosStr.equals("") && (inputFigurePosStr.length() == 2) && inputFigurePosStr.matches("[a-hA-H][1-8]")) {
+        if (!inputFigurePosStr.equals("") && (inputFigurePosStr.length() == 2) && inputFigurePosStr.matches("[a-hA-H][1-8]"))
+        {
             char letter = inputFigurePosStr.charAt(0);
             int number = Character.getNumericValue(inputFigurePosStr.charAt(1));
 
             //System.out.println("The input String is valid and is: " + inputFigurePosStr);
             //in case the input letter is in lower case, make it upper case
-            if (Character.isLowerCase(letter)) {
+            if (Character.isLowerCase(letter))
+            {
                 letter = Character.toUpperCase(letter);
             }
 
             ChessBoardPos inputChessPos = new ChessBoardPos(letter, number);
-            //System.out.println("inputChessPos.letter= " + inputChessPos.getLetter() + " inputChessPos.number= " + inputChessPos.getNumber());
 
             ArrayPos inputPos = getArrayPos(inputChessPos);
-            //System.out.println("inputPos.x= " + inputPos.getX() + " inputPos.y= " + inputPos.getY());
 
             //change the figure position to inputted position value 
-            squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
+            if (currentTargetPos != null)
+            {
+                squares[currentTargetPos.getX()][currentTargetPos.getY()].setIcon(null);
+            }
             toNode.setText(null);
-            //since the figure position is changed, there are not aany visited nodes
+
+            //since the figure position is changed, there are not any visited nodes or list of nodes
             visitedNodes.clear();
+            levelListsCollector.clear();
+            moves = 0;
+
             setFigurePos(inputPos);
 
         } //if there is no input for desired figure porisition, set figure to default position (0,0)
-        else {
+        else
+        {
             JOptionPane.showMessageDialog(this, "Invalid square coordinates");
             fromNode.setText(null);
-            //setFigurePos(defaultFigurePos);
         }
     }
 
@@ -390,7 +469,8 @@ public class ShortestPathChessboardControls extends JFrame {
 
         ChessBoardPos result = new ChessBoardPos('\u0000', 0);
 
-        switch (arPos.getY()) {
+        switch (arPos.getY())
+        {
             case 0:
                 result.setLetter('A');
                 break;
@@ -418,7 +498,8 @@ public class ShortestPathChessboardControls extends JFrame {
             default:
 
         }
-        switch (arPos.getX()) {
+        switch (arPos.getX())
+        {
             case 0:
                 result.setNumber(8);
                 break;
@@ -453,7 +534,8 @@ public class ShortestPathChessboardControls extends JFrame {
 
         ArrayPos result = new ArrayPos(0, 0);
 
-        switch (chessPos.getLetter()) {
+        switch (chessPos.getLetter())
+        {
             case 'A':
                 result.setY(0);
                 break;
@@ -481,7 +563,8 @@ public class ShortestPathChessboardControls extends JFrame {
             default:
 
         }
-        switch (chessPos.getNumber()) {
+        switch (chessPos.getNumber())
+        {
             case 8:
                 result.setX(0);
                 break;

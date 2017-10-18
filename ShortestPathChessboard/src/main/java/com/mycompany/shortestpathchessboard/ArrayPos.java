@@ -1,3 +1,5 @@
+package com.mycompany.shortestpathchessboard;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,17 +15,15 @@ public class ArrayPos {
     private int x;
     private int y;
 
-    ArrayPos(int x, int y) {
+    public ArrayPos(int x, int y) {
         this.x = x;
         this.y = y;
     }
     @Override
     public boolean equals(Object o) {
-        if ((o instanceof ArrayPos) && (((ArrayPos) o).x == this.x) && (((ArrayPos) o).y == this.y))
-        {
+        if ((o instanceof ArrayPos) && (((ArrayPos) o).x == this.x) && (((ArrayPos) o).y == this.y)) {
             return true;
-        } else
-        {
+        } else {
             return false;
         }
     }
@@ -51,5 +51,4 @@ public class ArrayPos {
     public void setY(int y) {
         this.y = y;
     }
-
 }
