@@ -1,3 +1,5 @@
+package com.mycompany.shortestpathchessboard;
+
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -6,9 +8,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,7 +27,7 @@ import javax.swing.JTextField;
  *
  * @author makis
  */
-public class ShortestPathChessboardControls extends JFrame {
+public final class ShortestPathChessboardControls extends JFrame {
 
     private JPanel topPanel, chessBoardPane, controlsPane;
     private JButton[][] squares = new JButton[8][8];
